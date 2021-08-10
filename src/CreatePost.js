@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { instance } from "./api/axios";
 import { usePost } from "./context/PostContext";
 
@@ -15,7 +15,6 @@ export const CreatePost = () => {
     setModal
   } = usePost();
   const [searchGif, setSearchGif] = useState(false);
-  const [gifSearch, setGifSearch] = useState("");
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(false);
   const ref = useRef("");
@@ -57,11 +56,11 @@ export const CreatePost = () => {
   };
 
   const handleGif = async (e) => {
-    if (gifSearch.length !== 0) {
+    if (ref.current.value.length !== 0) {
       try {
         setLoader(true);
         const response = await instance.get(
-          `/search?api_key=k63sMfP5nNS9CcNQCVCWGip59G0Jidhn&q=${gifSearch}&limit=5&offset=0&rating=g&lang=en`
+          `/search?api_key=k63sMfP5nNS9CcNQCVCWGip59G0Jidhn&q=${ref.current.value}&limit=10&offset=0&rating=g&lang=en`
         );
         setLoader(false);
         console.log(response.data.data);
@@ -69,14 +68,11 @@ export const CreatePost = () => {
       } catch (error) {
         console.log(error);
       }
+    } else {
+      console.log("Not able to make calls");
     }
   };
-  const betterSearch = function (e) {
-    console.log(e.target.value);
-    setGifSearch(e.target.value);
-    return debounce(handleGif, 400);
-  };
-
+  const betterSearch = debounce(handleGif, 400);
   const getSource = (e) => {
     console.log(e.target.src);
     setPost([
@@ -105,10 +101,10 @@ export const CreatePost = () => {
         {searchGif && (
           <div>
             <input
-              onChange={(e) => betterSearch(e)()}
+              onChange={betterSearch}
               placeholder="Search gif"
               className="input input-blue mtb1-rem"
-              value={gifSearch}
+              ref={ref}
             />
             <span className="pointer" onClick={() => setSearchGif(false)}>
               x
@@ -130,7 +126,7 @@ export const CreatePost = () => {
         {searchGif && (
           <>
             <div>
-              <h3 className="h5 mt1-rem">Image preview</h3>
+              <h3 className="h5 mtb1-rem">Image preview</h3>
               {post[0].image.length !== 0 && (
                 <img src={post[0].image} className="small-img" alt="preview" />
               )}
