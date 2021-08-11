@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { instance } from "./api/axios";
 import { usePost } from "./context/PostContext";
 
@@ -6,8 +6,6 @@ export const CreatePost = () => {
   const {
     error,
     setError,
-    text,
-    setText,
     post,
     setPost,
     posts,
@@ -20,20 +18,16 @@ export const CreatePost = () => {
   const ref = useRef("");
   const handleChange = (e) => {
     e.preventDefault();
-    setText(e.target.value);
+    setPost({ ...post, text: e.target.value });
   };
   const submitPost = () => {
-    if (post[0].text.length !== 0 || post[0].image.length !== 0) {
+    if (post.text.length !== 0 || post.image.length !== 0) {
       setPosts([...posts, post]);
-      setPost([
-        {
-          text: "",
+      setPost({
+        text: "",
 
-          image: ""
-        }
-      ]);
-
-      console.log(post);
+        image: ""
+      });
 
       setModal(false);
     } else {
@@ -63,7 +57,6 @@ export const CreatePost = () => {
           `/search?api_key=k63sMfP5nNS9CcNQCVCWGip59G0Jidhn&q=${ref.current.value}&limit=10&offset=0&rating=g&lang=en`
         );
         setLoader(false);
-        console.log(response.data.data);
         setData([...response.data.data]);
       } catch (error) {
         console.log(error);
@@ -74,13 +67,7 @@ export const CreatePost = () => {
   };
   const betterSearch = debounce(handleGif, 400);
   const getSource = (e) => {
-    console.log(e.target.src);
-    setPost([
-      {
-        text: text,
-        image: e.target.src
-      }
-    ]);
+    setPost({ ...post, image: e.target.src });
   };
   return (
     <div className="container">
@@ -127,8 +114,12 @@ export const CreatePost = () => {
           <>
             <div>
               <h3 className="h5 mtb1-rem">Image preview</h3>
-              {post[0].image.length !== 0 && (
-                <img src={post[0].image} className="small-img" alt="preview" />
+              {post.image.length !== 0 && (
+                <img
+                  src={post.image}
+                  className=" br10px small-img"
+                  alt="preview"
+                />
               )}
             </div>
             <div className="mt1-rem gifs-toolbar">
@@ -139,7 +130,7 @@ export const CreatePost = () => {
                   {data.map((gif) => {
                     return (
                       <img
-                        className="pointer"
+                        className="pointer br10px"
                         onClick={getSource}
                         key={gif.id}
                         src={gif.images.downsized.url}

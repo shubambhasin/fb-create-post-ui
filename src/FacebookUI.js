@@ -1,22 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import avatar from "./assets/avatar.jpg";
 import { usePost } from "./context/PostContext";
 import { CreatePost } from "./CreatePost";
 export const FacebookUI = () => {
-  const {
-    error,
-    setError,
-    post,
-    setPost,
-    posts,
-    setPosts,
-    modal,
-    setModal
-  } = usePost();
+  const { posts, modal, setModal } = usePost();
 
   console.log(posts);
   return (
     <div className="flex flex-col gap-2 relative">
+      <h1 className="h2">PostBook</h1>
       <button className="btn btn-blue" onClick={() => setModal(true)}>
         Create post
       </button>
@@ -36,11 +28,11 @@ export const FacebookUI = () => {
                     </div>
                     <div className="post-data flex flex-col aifs">
                       <small className="bold">Test User</small>
-                      <p className=" mtb1-rem">{post[0].text}</p>
-                      {post[0].image.length !== 0 && (
+                      <p className=" mtb1-rem">{post.text}</p>
+                      {post.image.length !== 0 && (
                         <img
-                          class="post-gif br5px"
-                          src={post[0].image}
+                          className="post-gif br5px"
+                          src={post.image}
                           alt="img"
                         />
                       )}
